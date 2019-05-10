@@ -1,7 +1,7 @@
 ---
 title: "Shiny 활용 의학연구지원 경험"
 author: "김진섭"
-date: "`r Sys.Date()`"
+date: "2019-05-31"
 output:
   xaringan::moon_reader:
     css: ["css/footer-header.css", "default"]
@@ -17,6 +17,7 @@ output:
       highlightLines: true
       countIncrementalSlides: false
       ratio: "4:3" 
+subtitle: "shinykorea 5월 밋업"
 ---
 
 ```{r setup, include=FALSE}
@@ -211,7 +212,7 @@ include_graphics("https://raw.githubusercontent.com/jinseob2kim/jsmodule/master/
 개발, 맞춤형 앱
 
 * 대학원 서버에 [Docker 이미지](https://cloud.docker.com/u/jinseob2kim/repository/docker/jinseob2kim/docker-rshiny) 설치하여 기생.
-    + R, Rstudio server, shiny server와 자주 쓰는 패키지를 미리 설치.
+    + [R](https://www.r-project.org/), [RStudio server](https://www.rstudio.com/products/rstudio/download-server/), [shiny server](https://www.rstudio.com/products/shiny/download-server/)와 자주 쓰는 패키지를 미리 설치.
     
 --
 
