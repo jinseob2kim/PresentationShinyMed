@@ -16,7 +16,7 @@ output:
       highlightLines: true
       countIncrementalSlides: false
       ratio: "4:3" 
-subtitle: "을지대학교 EMBRI 세미나"
+subtitle: "CRScube 세미나"
 ---
 
 ```{r setup, include=FALSE}
