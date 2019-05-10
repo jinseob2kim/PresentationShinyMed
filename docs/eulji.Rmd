@@ -10,8 +10,9 @@ output:
       beforeInit: "js/macros.js"
       slideNumberFormat: |
         <div class="progress-bar-container">
-          </div>
           <div class="progress-bar" style="width: calc(%current% / %total% * 100%);">
+          </div>
+        </div>
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
