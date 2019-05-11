@@ -156,6 +156,35 @@ datatable(
   )
 )
 ```
+
+---
+# 그림 다운로드
+
+Shiny에서 모든 편집옵션 지원불가, 직접 편집 가능해야 함.
+
+* `svg` 확장자: [Cairo](https://CRAN.R-project.org/package=Cairo) 패키지 이용, [Inkscape](https://inkscape.org/ko/)에서 편집. `ggsave()` 지원.
+
+* `emf` 확장자: [devEMF](https://cran.r-project.org/package=devEMF) 패키지 이용, **PPT**에서 편집, `ggsave()` 지원 안함.
+
+윈도우 환경에서는 `wmf` 확장자 이용,  `ggsave()` 저장 후 **PPT** 편집 가능. 
+
+---
+# Example: `emf`
+
+**PPT** 정확한 그림인식 위해 **emfPlus = F** 옵션 필수!
+
+```{r, echo = T, eval = F}
+library(devEMF)
+emf("plot.emf", width = 7, height = 7, emfPlus = F)
+ggplot(mtcars, aes(mpg, cyl)) + geom_point()
+dev.off()
+```
+
+```{r, out.width= "70%"}
+include_graphics("zzz.png")
+```
+
+
 ---
 # 심혈관 생리지표 계산
 
