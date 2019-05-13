@@ -39,20 +39,26 @@ layout: true
 # Executive Summary 
 
 .large[
-
-* 의학연구자들에게 맞춤형 [ShinyApps](https://shiny.rstudio.com/)를 제공함.
-    + 범용으로 쓰일만한 것들을 [Shiny module](https://shiny.rstudio.com/articles/modules.html)로 만든 후, [웹](http://app.zarathu.com)과 [RStudio Addins](https://github.com/jinseob2kim/jsmodule)로 배포.
+* [R](https://www.r-project.org/)로 통계분석 뿐 아니라 [논문](https://github.com/rstudio/rticles), [발표 슬라이드](https://github.com/yihui/xaringan), [홈페이지](https://github.com/rstudio/blogdown), [블로그](https://rstudio.github.io/distill/), [웹 어플리케이션](https://shiny.rstudio.com/)을 만들 수 있다. 
 ]
 
 --
 .large[
-* [심혈관중재학회](http://www.kscvi.org/new_ksic2015/community/main/kbc)와 계약, 1년간 [레지스트리](https://clinicaltrials.gov/ct2/show/NCT03068494) 연구에 대한 리포트를 제공 중(Rmarkdown 활용).
+* 의학연구자들에게 [맞춤형 통계 웹](http://app.zarathu.com)을 제공하는 것을 업으로 삼고 있다.
+
+
+* 범용으로 쓰일만한 것들을 [웹](http://app.zarathu.com)과 [R 패키지](https://github.com/jinseob2kim/jsmodule)로 배포한다.
 ]
 
 --
 .large[
-* [심평원](https://opendata.hira.or.kr/)/[보험공단](https://nhiss.nhis.or.kr/) 빅데이터 연구에서 Rmarkdown 리포트로 연구지원 중.
+* [심혈관중재학회](http://www.kscvi.org/new_ksic2015/community/main/kbc)와 계약, 1년간 [레지스트리](https://clinicaltrials.gov/ct2/show/NCT03068494) 연구에 대한 통계지원을 맡고 있다.
+
+
+* [심평원](https://opendata.hira.or.kr/)/[보험공단](https://nhiss.nhis.or.kr/) 빅데이터 연구도 개별적으로 지원중.
 ]
+
+
 
 
 
@@ -60,11 +66,98 @@ layout: true
 
 class: center, middle
 
-# ShinyApps
+# [R](https://www.r-project.org/)의 확장
+
+---
+# [R](https://www.r-project.org/)의 확장
+
+[R](https://www.r-project.org/)은 이제 단순한 통계프로그램이 아님.
+
+* [R Markdown](https://rmarkdown.rstudio.com/): 논문과 발표자료를 [R](https://www.r-project.org/) 에서 직접 만듦. [과거 정리 내용](https://blog.zarathu.com/posts/2019-01-03-rmarkdown/)
+
+--
+
+* [blogdown](https://github.com/rstudio/blogdown): 홈페이지도 만들 수 있음. 당사 홈페이지도 이것과 [distill](https://rstudio.github.io/distill/) 로 제작.
+
+--
+
+* [Shiny](https://shiny.rstudio.com/), [Shiny Server](https://www.rstudio.com/products/shiny/shiny-server/): 서버 구축하고 웹기반 앱을 만들 수 있음.
+
+--
+
+법인 설립 후 모든 작업에 [R](https://www.r-project.org/)을 이용함. 
+
+---
+# 논문 
+
+[R](https://www.r-project.org/)에서 글, 그림, 테이블, 참고문헌까지 직접 작성. 
+ 
+* [rticles](https://github.com/rstudio/rticles): 대부분 학술지의 템플릿을 포함.
+
+```{r, fig.align='center', out.width= "50%"}
+include_graphics("https://bookdown.org/yihui/rmarkdown/images/rticles-templates.png")
+```
+
+[준비하던 박사논문](https://blog.zarathu.com/posts/2018-11-08-mdlm/)  
+
+---
+# 발표 슬라이드
+
+논문쓸 때 이용했던 R 코드 활용, 빠르게 발표 슬라이드 제작 가능.
+
+* [기본 템플릿](https://rmarkdown.rstudio.com/lesson-11.html), [xaringan](https://github.com/yihui/xaringan) 패키지: 이 슬라이드도 [xaringan](https://github.com/yihui/xaringan)으로 제작.
+
+```{r, out.width= "80%"}
+include_graphics("https://user-images.githubusercontent.com/163582/53144527-35f7a500-3562-11e9-862e-892d3fd7036d.gif")
+```
 
 
 ---
-# 맞춤형 ShinyApps
+# 홈페이지
+
+[blogdown](https://github.com/rstudio/blogdown), [distill](https://rstudio.github.io/distill/): [깃허브](https://pages.github.com/) 통해 무료 웹호스팅 가능.
+
+```{r, out.width= "80%"}
+include_graphics("https://www.storybench.org/wp-content/uploads/2019/05/blogdown-new-site-e1557149319624-730x457.png")
+```
+
+[홈페이지](https://github.com/zarathucorp/zarathu), [블로그](https://github.com/zarathucorp/blog)
+
+
+---
+# 웹 앱
+
+[Shiny](https://shiny.rstudio.com/): [R](https://www.r-project.org/) 코드만으로 웹앱 제작
+
+```{r}
+include_graphics("https://shiny.rstudio.com/images/debugging/kmeans-showcase.gif")
+```
+
+
+
+
+
+---
+# 웹 서버
+
+[Shiny Server](https://www.rstudio.com/products/shiny/shiny-server/): [Shiny](https://shiny.rstudio.com/)를 서버에서 구동.
+
+```{r}
+include_graphics("https://shiny.rstudio.com/images/shiny-server-pro.png")
+```
+
+[Zarathu app](http://app.zarathu.com)
+
+
+---
+
+class: center, middle
+
+# 맞춤형 서비스
+
+
+---
+# 맞춤형 웹
 
 * 안과 
     + 시야 데이터 분석
@@ -172,10 +265,14 @@ datatable(
 
 
 
+---
 
+class: center, middle
+
+# 범용 서비스
 
 ---
-# 범용 ShinyApps
+# 직접 데이터 업로드해서 이용
 
 데이터 형태에 따라 3개로 따로 만듦. 기술통계, 회귀분석/생존분석, ROC 분석을 포함. 
 
@@ -194,16 +291,18 @@ datatable(
 ---
 # R 패키지: [jsmodule](https://github.com/jinseob2kim/jsmodule) 
 
-자신의 컴퓨터에서 직접 수행할 수 있도록 [Rstudio Addin 포함한 패키지](https://github.com/jinseob2kim/jsmodule)로 배포, [CRAN](https://github.com/jinseob2kim/jsmodule) 등록됨 
+자신의 컴퓨터에서 직접 수행할 수 있도록 [Rstudio Addin 포함한 패키지](https://github.com/jinseob2kim/jsmodule)로 배포, [CRAN](https://cran.r-project.org/package=jsmodule) 등록됨. 그 외, 생존분석 그림을 위한 [jskm](https://cran.r-project.org/package=jskm), 회귀분석 테이블을 만드는 [jstable](https://cran.r-project.org/package=jstable) 
 
 ```{r}
 include_graphics("https://raw.githubusercontent.com/jinseob2kim/jsmodule/master/vignettes/figures/addin.gif")
 ```
 
+
 ---
 ## 패키지 다운로드 수
 
 [![](cran_down.png)](https://ipub.com/dev-corner/apps/r-package-downloads/)
+
 
 
 ---
@@ -237,7 +336,7 @@ include_graphics("https://raw.githubusercontent.com/jinseob2kim/jsmodule/master/
 
 class: center, middle
 
-# Rmarkdown
+# 맞춤형 리포트 지원경험
 
 
 ---
@@ -250,10 +349,10 @@ include_graphics("cobis.png")
 ```
 
 
-원하는 논문테이블, 그림을 알려주면 제작.
+원하는 논문테이블, 그림을 알려주면 리포트 제작.
 
+* 보안 문제로 **웹보다 리포트를 원함**.
 
-* 테이블은 `knitr::kable`과 [kabelextra](https://cran.r-project.org/package=kableExtra) 패키지 이용.
 
 
 ---
@@ -295,6 +394,26 @@ data.xray <- list.files(pattern = "t30") %>%
   read_sas(x) %>% filter(substr(MCARE_DIV_CD_ADJ, 1, 3) == "G21") %>% select(CMN_KEY, MCARE_DIV_CD_ADJ)}) %>% 
   bind_rows 
 ```
+
+---
+# Executive Summary 
+
+.large[
+* [R](https://www.r-project.org/)로 통계분석 뿐 아니라 [논문](https://github.com/rstudio/rticles), [발표 슬라이드](https://github.com/yihui/xaringan), [홈페이지](https://github.com/rstudio/blogdown), [블로그](https://rstudio.github.io/distill/), [웹 어플리케이션](https://shiny.rstudio.com/)을 만들 수 있다. 
+
+
+* 의학연구자들에게 [맞춤형 통계 웹](http://app.zarathu.com)을 제공하는 것을 업으로 삼고 있다.
+
+
+* 범용으로 쓰일만한 것들을 [웹](http://app.zarathu.com)과 [R 패키지](https://github.com/jinseob2kim/jsmodule)로 배포한다.
+
+
+* [심혈관중재학회](http://www.kscvi.org/new_ksic2015/community/main/kbc)와 계약, 1년간 [레지스트리](https://clinicaltrials.gov/ct2/show/NCT03068494) 연구에 대한 통계지원을 맡고 있다.
+
+
+* [심평원](https://opendata.hira.or.kr/)/[보험공단](https://nhiss.nhis.or.kr/) 빅데이터 연구도 개별적으로 지원중.
+]
+
 
 
 ---
