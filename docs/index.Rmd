@@ -1,6 +1,7 @@
 ---
 title: "Shiny 활용 의학연구지원 경험"
 author: "김진섭"
+institute: "차라투(주)"
 date: "2019-05-31"
 output:
   xaringan::moon_reader:

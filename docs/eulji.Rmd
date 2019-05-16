@@ -1,6 +1,7 @@
 ---
 title: "R 활용 맞춤형 통계지원 소개"
 author: "김진섭"
+institute: "차라투(주)"
 date: "2019-05-31"
 output:
   xaringan::moon_reader:
