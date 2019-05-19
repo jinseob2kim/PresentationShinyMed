@@ -220,7 +220,24 @@ class: center, middle
 .pull-right[
 [![Time dependent ROC](geeplot2.png)](http://app.zarathu.com)
 ]
- 
+
+
+---
+# PPT에서 편집: `emf` 확장자
+
+**PPT** 정확한 그림인식 위해 **emfPlus = F** 옵션 필수!
+
+```{r, echo = T, eval = F}
+library(devEMF)
+emf("plot.emf", width = 7, height = 7, emfPlus = F)
+ggplot(mtcars, aes(mpg, cyl)) + geom_point()
+dev.off()
+```
+
+```{r, out.width= "70%"}
+include_graphics("zzz.png")
+```
+
 ---
 # 테이블 다운로드 예
 
