@@ -1,7 +1,8 @@
 ---
 title: "R 이용 공공빅데이터 분석 경험"
 author: "김진섭; [`r anicon::faa('github', animate='float', rtext='jinseob2kim')`](https://github.com/jinseob2kim)"
-institute: "차라투(주)"
+institute: "차라투"
+date: "2019-09-25"
 output:
   xaringan::moon_reader:
     css: ["css/footer-header.css", "default"]
