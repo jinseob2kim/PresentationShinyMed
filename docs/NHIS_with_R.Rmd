@@ -49,9 +49,11 @@ layout: true
 .large[
 * [haven](https://github.com/tidyverse/haven) 패키지로 SAS 파일을 직접 읽을 수 있다.
 
-* [tidyverse](https://www.tidyverse.org/), [data.table](https://github.com/Rdatatable/data.table) 을 활용, 기존 [R](https://www.r-project.org/) 문법보다 빠르게 데이터 를 정리할 수 있다.  
-]
+* [dplyr](https://dplyr.tidyverse.org), [data.table](https://github.com/Rdatatable/data.table) 을 활용, 기존 [R](https://www.r-project.org/) 문법보다 빠르게 데이터 를 정리할 수 있다.  
 
+
+* [dbplyr](https://dplyr.tidyverse.org) 를 활용, [R](https://www.r-project.org/) 코드를 **PROC SQL** 문으로 바꿔 복잡한 SAS 작업을 수행할 수 있다. 
+]
 
 --
 .large[
@@ -66,7 +68,7 @@ layout: true
 ---
 # Why [R](https://www.r-project.org/)?
 
-
+.large[
 **장점** 
 
 - 더 간단한 코드: 특히 **Group by** 작업 
@@ -80,7 +82,7 @@ layout: true
 - Memory 문제: 용량 큰 데이터는 SAS 전처리 필요.
 
 - 공단 명동분석실 환경악화: 램 8gb, 하드 100gb
-
+]
 
 
 ---
@@ -104,7 +106,8 @@ t20[1:100, ]                            ## Show first 100 rows
 
 ```{r, eval = T, echo = F}
 library(haven)
-t20 <- read_sas("t20_example.sas7bdat")  
+#t29 <- read_sas("docs/t20_example.sas7bdat")
+t20 <- read_sas("t20_example.sas7bdat")
 t20[1:100, ] %>% paged_table()              ## Show first 100 rows
 ```
 
@@ -184,20 +187,16 @@ https://jinseob2kim.github.io/radv1.html
 
 # Comparison: 최초 자살시도 
 
-```r
-## Suicide code
-tg2.sickreg <- paste0("X", 60:84)
-```
 
 [dplyr](https://dplyr.tidyverse.org/)
 
 ```{r, eval = F}
 out <- t20 %>% 
-  filter(substr(SICK_SYM1, 1, 3) %in% tg2.sickreg) %>% 
+  filter(substr(SICK_SYM1, 1, 3) %in% paste0("X", 60:84)) %>%  ## X60-84: suicide
   arrange(MDCARE_STRT_DT) %>%
-  mutate(YEAR = substr(MDCARE_STRT_DT, 1, 4))    ## Add year variable
-  group_by(INDI_DSCM_NO) %>% 
-  slice(1)
+  mutate(YEAR = substr(MDCARE_STRT_DT, 1, 4)) %>%              ## add year variable
+  group_by(INDI_DSCM_NO) %>%                                   ## group by individual
+  filter(row_number() == 1)                                    ## 1st row
 ```
 
 [data.table](https://rdatatable.gitlab.io/data.table/)
@@ -207,8 +206,62 @@ library(data.table)
 t20 <- data.table(t20)
 setkey(t20, INDI_DSCM_NO)  ## Fast groupby operation
 
-out <- t20[substr(SICK_SYM1, 1, 3) %in% tg2.sickreg][order(MDCARE_STRT_DT)][, YEAR := substr(MDCARE_STRT_DT, 1, 4)][, .SD[1], by = INDI_DSCM_NO] 
+out <- t20[substr(SICK_SYM1, 1, 3) %in% paste0("X", 60:84)][order(MDCARE_STRT_DT)][, YEAR := substr(MDCARE_STRT_DT, 1, 4)][, .SD[1], by = INDI_DSCM_NO] 
 ```
+
+---
+# [dplyr](https://dplyr.tidyverse.org/) to SQL
+
+[dbplyr](https://dbplyr.tidyverse.org) 패키지로 [dplyr](https://dplyr.tidyverse.org/) 문법을 **SQL** 문으로 바꿀 수 있다.
+
+```r
+library(dbplyr)
+*t20.db <- tbl_memdb(t20)                               ## DB type data
+t20.db %>% 
+  filter(substr(SICK_SYM1, 1, 3) %in% paste0("X", 60:84)) %>% 
+  arrange(MDCARE_STRT_DT) %>%
+  mutate(YEAR = substr(MDCARE_STRT_DT, 1, 4)) %>%       ## Add year variable
+  group_by(INDI_DSCM_NO) %>%                            ## group by individual
+  filter(row_number() == 1) %>%                         ## 1st row
+* show_query                                            ## Show SQL query
+```
+
+```sql
+SELECT `INDI_DSCM_NO`, `RN_KEY`, `RN_INST`, `MDCARE_STRT_DT`, `FORM_CD`, `MCARE_SUBJ_CD`, `SICK_SYM1`, `SICK_SYM2`, `HSPTZ_PATH_TYPE`, `OFIJ_TYPE`, `OPRTN_YN`, `MDCARE_DD_CNT`, `VSHSP_DD_CNT`, `TOT_PRSC_DD_CNT`, `MCARE_RSLT_TYPE`, `FST_HSPTZ_DT`, `EDC_ADD_RT`, `SPCF_SYM_TYPE`, `ED_RC_TOT_AMT`, `EDC_SBA`, `EDC_INSUR_BRDN_AMT`, `STD_YYYY`, `YEAR`
+FROM (SELECT `INDI_DSCM_NO`, `RN_KEY`, `RN_INST`, `MDCARE_STRT_DT`, `FORM_CD`, `MCARE_SUBJ_CD`, `SICK_SYM1`, `SICK_SYM2`, `HSPTZ_PATH_TYPE`, `OFIJ_TYPE`, `OPRTN_YN`, `MDCARE_DD_CNT`, `VSHSP_DD_CNT`, `TOT_PRSC_DD_CNT`, `MCARE_RSLT_TYPE`, `FST_HSPTZ_DT`, `EDC_ADD_RT`, `SPCF_SYM_TYPE`, `ED_RC_TOT_AMT`, `EDC_SBA`, `EDC_INSUR_BRDN_AMT`, `STD_YYYY`, `YEAR`, ROW_NUMBER() OVER (PARTITION BY `INDI_DSCM_NO` ORDER BY `MDCARE_STRT_DT`) AS `zzz3`
+      FROM (SELECT `INDI_DSCM_NO`, `RN_KEY`, `RN_INST`, `MDCARE_STRT_DT`, `FORM_CD`, `MCARE_SUBJ_CD`, `SICK_SYM1`, `SICK_SYM2`, `HSPTZ_PATH_TYPE`, `OFIJ_TYPE`, `OPRTN_YN`, `MDCARE_DD_CNT`, `VSHSP_DD_CNT`, `TOT_PRSC_DD_CNT`, `MCARE_RSLT_TYPE`, `FST_HSPTZ_DT`, `EDC_ADD_RT`, `SPCF_SYM_TYPE`, `ED_RC_TOT_AMT`, `EDC_SBA`, `EDC_INSUR_BRDN_AMT`, `STD_YYYY`, SUBSTR(`MDCARE_STRT_DT`, 1, 4) AS `YEAR`
+            FROM (SELECT *
+                    FROM (SELECT *
+                            FROM `t20`
+                          WHERE (SUBSTR(`SICK_SYM1`, 1, 3) IN 'X' || (60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84)))
+                  ORDER BY `MDCARE_STRT_DT`)))
+WHERE (`zzz3` = 1.0)
+```
+
+---
+# SQL to SAS
+
+생성된 **SQL** 은 바로 SAS **PROC SQL** 문으로 이용 가능.(따옴표는 삭제)
+
+```sql
+PROC SQL;
+CREATE TABLE out AS
+*SELECT INDI_DSCM_NO, RN_KEY, RN_INST, MDCARE_STRT_DT, FORM_CD, MCARE_SUBJ_CD, SICK_SYM1, SICK_SYM2, HSPTZ_PATH_TYPE, OFIJ_TYPE, OPRTN_YN, MDCARE_DD_CNT, VSHSP_DD_CNT, TOT_PRSC_DD_CNT, MCARE_RSLT_TYPE, FST_HSPTZ_DT, EDC_ADD_RT, SPCF_SYM_TYPE, ED_RC_TOT_AMT, EDC_SBA, EDC_INSUR_BRDN_AMT, STD_YYYY, YEAR
+*FROM (SELECT INDI_DSCM_NO, RN_KEY, RN_INST, MDCARE_STRT_DT, FORM_CD, MCARE_SUBJ_CD, SICK_SYM1, SICK_SYM2, HSPTZ_PATH_TYPE, OFIJ_TYPE, OPRTN_YN, MDCARE_DD_CNT, VSHSP_DD_CNT, TOT_PRSC_DD_CNT, MCARE_RSLT_TYPE, FST_HSPTZ_DT, EDC_ADD_RT, SPCF_SYM_TYPE, ED_RC_TOT_AMT, EDC_SBA, EDC_INSUR_BRDN_AMT, STD_YYYY, YEAR, ROW_NUMBER() OVER (PARTITION BY INDI_DSCM_NO ORDER BY MDCARE_STRT_DT) AS zzz3
+*       FROM (SELECT INDI_DSCM_NO, RN_KEY, RN_INST, MDCARE_STRT_DT, FORM_CD, MCARE_SUBJ_CD, SICK_SYM1, SICK_SYM2, HSPTZ_PATH_TYPE, OFIJ_TYPE, OPRTN_YN, MDCARE_DD_CNT, VSHSP_DD_CNT, TOT_PRSC_DD_CNT, MCARE_RSLT_TYPE, FST_HSPTZ_DT, EDC_ADD_RT, SPCF_SYM_TYPE, ED_RC_TOT_AMT, EDC_SBA, EDC_INSUR_BRDN_AMT, STD_YYYY, SUBSTR(MDCARE_STRT_DT, 1, 4) AS YEAR
+*              FROM (SELECT *
+*                       FROM (SELECT *
+*                                FROM t20
+*                              WHERE (SUBSTR(SICK_SYM1, 1, 3) IN 'X' || (60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84)))
+*                     ORDER BY MDCARE_STRT_DT)))
+*WHERE (zzz3 = 1.0)
+QUIT;
+```
+
+--
+[R](https://www.r-project.org/) 로 직관적인 코드를 만든 후, **PROC SQL** 문으로 바꿔 복잡한 SAS 작업을 수행할 수 있다. 
+- 번역 불가능한 [R](https://www.r-project.org/) 함수도 있으므로 주의. 
+- 도움말 https://dbplyr.tidyverse.org/articles/sql.html 
 
 ---
 # Tip: Date 다루기
@@ -249,7 +302,7 @@ class: center, middle
 
 - [jskm](https://github.com/jinseob2kim/jskm): kaplan-meier 생존곡선 그리기
 
-- [jsmodule](https://github.com/jinseob2kim/jsmodule): 웹 기반 통계분석
+- [jsmodule](https://github.com/jinseob2kim/jsmodule): 위 2 패키지를 적용한 통계분석 웹
 
 --
 
@@ -257,14 +310,35 @@ class: center, middle
 
 
 ---
-# [jstable](https://github.com/jinseob2kim/jstable)
+# [jstable](https://github.com/jinseob2kim/jstable): table 1
 
-```{r}
+```r
 library(jstable)
+*tb1 <- CreateTableOneJS(names(mtcars), strata = "vs", data = mtcars, factorVars = c("vs", "am", "gear", "carb"))
+datatable(tb1$table[, -6], caption = tb1$caption)
+```
+
+```{r, echo = F}
+library(jstable)
+tb1 <- CreateTableOneJS(names(mtcars), strata = "vs", data = mtcars, factorVars = c("vs", "am", "gear", "carb"))
+datatable(tb1$table[, -6], caption = tb1$caption, options = list(pageLength = 5))
+```
+
+---
+# [jstable](https://github.com/jinseob2kim/jstable): regression
+
+```r
+model.logisic <- glm(vs ~ wt + qsec, data = mtcars)
+*res.logistic <- glmshow.display(model.logisic)
+*out.logistic <- LabelepiDisplay(res.logistic)
+datatable(out.logistic, caption = res.logistic$first.line)
+```
+
+```{r, echo=F}
 model.logisic <- glm(vs ~ wt + qsec, data = mtcars)
 res.logistic <- glmshow.display(model.logisic)
 out.logistic <- LabelepiDisplay(res.logistic)
-datatable(out.logistic, caption = res.logistic$first.line)
+datatable(out.logistic, caption = res.logistic$first.line, options = list(dom = 'rt'))
 ```
 
 ---
@@ -310,9 +384,54 @@ jskm(fit, timeby=365, marks = F, pval = T, table = T)
 
 --
 
-지원하는 통계 
+주요 기능
+
+- 범주형 변수 만들기, reference 바꾸기, Subgroup
 
 - Table 1, 회귀분석, 생존분석, ROC 분석
+
+
+---
+
+<center>
+<figure>
+<img src="feature_jsmodule.jpg" width=100%>
+<figurecaption>범주형 변수 만들기, reference 바꾸기, Subgroup</figurecaption>
+</figure>
+</center> 
+
+---
+<center>
+<figure>
+<img src="tb1_jsmodule.jpg" width=100%>
+<figurecaption>Table 1</figurecaption>
+</figure>
+</center> 
+
+---
+<center>
+<figure>
+<img src="cox_jsmodule.jpg" width=100%>
+<figurecaption>Cox model</figurecaption>
+</figure>
+</center> 
+
+
+---
+<center>
+<figure>
+<img src="km_jsmodule.jpg" width=100%>
+<figurecaption>Kaplan-meier plot</figurecaption>
+</figure>
+</center> 
+
+---
+<center>
+<figure>
+<img src="timeroc_jsmodule.jpg" width=100%>
+<figurecaption>Time dependent ROC</figurecaption>
+</figure>
+</center> 
 
 ---
 # Table download
@@ -394,6 +513,30 @@ https://knhanes.cdc.go.kr/knhanes/sub03/sub03_02_02.do - **sas, spss** 지원
 </center>
 
 ---
+<center>
+<figure>
+<img src="untb1_jsmodule.jpg" width=100%>
+<figurecaption>Table1: 가중치 미적용</figurecaption>
+</figure>
+</center> 
+
+---
+<center>
+<figure>
+<img src="wttb1_jsmodule.jpg" width=100%>
+<figurecaption>Table1: 가중치 적용</figurecaption>
+</figure>
+</center> 
+
+---
+<center>
+<figure>
+<img src="svyglm_jsmodule.jpg" width=100%>
+<figurecaption>svyglm</figurecaption>
+</figure>
+</center> 
+
+---
 
 # Executive Summary 
 
@@ -402,7 +545,9 @@ https://knhanes.cdc.go.kr/knhanes/sub03/sub03_02_02.do - **sas, spss** 지원
 
 * [haven](https://github.com/tidyverse/haven) 패키지로 SAS 파일을 직접 읽을 수 있다.
 
-* [tidyverse](https://www.tidyverse.org/), [data.table](https://github.com/Rdatatable/data.table) 을 활용, 기존 [R](https://www.r-project.org/) 문법보다 빠르게 데이터 를 정리할 수 있다.  
+* [dplyr](https://dplyr.tidyverse.org), [data.table](https://github.com/Rdatatable/data.table) 을 활용, 기존 [R](https://www.r-project.org/) 문법보다 빠르게 데이터 를 정리할 수 있다.  
+
+* [dbplyr](https://dplyr.tidyverse.org) 를 활용, [R](https://www.r-project.org/) 코드를 **PROC SQL** 문으로 바꿔 복잡한 SAS 작업을 수행할 수 있다. 
 
 * 자체 개발한 [jsmodule](https://github.com/jinseob2kim/jsmodule) 패키지를 이용, GUI 환경에서 기술통계와 회귀/생존분석을 수행하고 테이블과 그림을 바로 다운받는다.
 
