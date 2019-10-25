@@ -2,7 +2,7 @@
 title: "R 이용 공공빅데이터 분석 경험"
 author: "김진섭; [`r anicon::faa('github', animate='float', rtext='jinseob2kim')`](https://github.com/jinseob2kim)"
 institute: "차라투"
-date: "2019-09-25"
+date: "2019-11-21"
 output:
   xaringan::moon_reader:
     css: ["css/footer-header.css", "default"]
@@ -17,7 +17,7 @@ output:
       highlightLines: true
       countIncrementalSlides: false
       ratio: "4:3" 
-subtitle: "을지대학교 학술원 특강"
+subtitle: "을지의대 세미나"
 editor_options: 
   chunk_output_type: console
 ---
