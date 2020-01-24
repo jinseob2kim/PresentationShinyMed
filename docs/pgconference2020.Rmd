@@ -319,7 +319,9 @@ include_graphics("https://raw.githubusercontent.com/jinseob2kim/jsmodule/master/
 ---
 ## 패키지 다운로드 수
 
-[![](cran_down.png)](https://ipub.com/dev-corner/apps/r-package-downloads/)
+
+<iframe src="https://shinyus.ipub.com/cranview/" width="100%" height="80%" frameborder="0" allowfullscreen></iframe>
+
 
 
 
