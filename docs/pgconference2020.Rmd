@@ -23,7 +23,7 @@ subtitle: "맞춤형 의학통계 웹"
 
 ```{r setup, include=FALSE}
 options(htmltools.dir.version = FALSE)
-knitr::opts_chunk$set(echo = FALSE, fig.align = "center")
+knitr::opts_chunk$set(echo = FALSE, fig.align = "center", message = F, warning = F)
 library(knitr);library(DT);library(dplyr);library(data.table);library(rmarkdown);library(readr);library(purrr);library(tidyr)
 ```
 
@@ -33,7 +33,7 @@ layout: true
 <div class="my-footer"><span><a href="https://www.zarathu.com">Zarathu Co.,Ltd</a>   
 &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
 &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
-<a href="https://github.com/jinseob2kim">김진섭</a></span></div> 
+<a href="https://github.com/jinseob2kim">조선니체</a></span></div> 
 
 
 ---
@@ -45,15 +45,49 @@ layout: true
 
 --
 .large[
-* 의학연구자들에게 [맞춤형 통계 웹](http://app.zarathu.com)을 제공하는 것을 업으로 삼고 있다.
+
+* 의학연구자들에게 [맞춤형 통계 웹](http://app.zarathu.com)을 제공.
 
 
-* 범용으로 쓰일만한 것들을 [웹](http://app.zarathu.com)과 [R 패키지](https://github.com/jinseob2kim/jsmodule)로 배포한다.
+* 범용으로 쓰일만한 것들을 [웹](http://app.zarathu.com)과 [R 패키지](https://github.com/jinseob2kim/jsmodule)로 배포.
+
 ]
 
 
+--
+.large[
+모임 소개 
+
+* [`r anicon::faa('github', animate='float', rtext='shinykorea')`](https://github.com/shinykorea/Meetup) 밋업 후원: [R](https://www.r-project.org/) 웹만들기 지식 공유
 
 
+* 카카오 오픈채팅: 프로그래밍 갤러리 R사용자 모임
+]
+
+---
+# 주요 경험 
+
+.large[
+
+* 수학 올림피아드
+
+
+* 의과대학: **임상** 데이터
+
+
+* 보건대학원: **유전체** 데이터
+
+
+* 삼성전자 무선사업부: **모바일헬스** 데이터
+]
+
+--
+.large[
+
+의학연구지원법인 [차라투](https://www.zarathu.com) 설립 
+
+* **다양한 건강데이터를 다뤄본 경험**으로 맞춤형 의료데이터 분석 지원
+]
 
 
 
@@ -128,7 +162,14 @@ include_graphics("https://www.storybench.org/wp-content/uploads/2019/05/blogdown
 include_graphics("https://shiny.rstudio.com/images/debugging/kmeans-showcase.gif")
 ```
 
+---
+# 웹 대시보드 
 
+[shinydashboard](https://rstudio.github.io/shinydashboard/), [flexdashboard](https://rmarkdown.rstudio.com/flexdashboard/) 등
+
+<center>
+<a href="https://rmarkdown.rstudio.com/flexdashboard"><img src="https://tadge-analytics.com.au/content/images/2020/01/feature-demonstration.gif" width=70%></a>
+</center>
 
 
 
@@ -152,12 +193,11 @@ class: center, middle
 
 
 ---
-# 맞춤형 웹
+# 전문적인 통계분석
 
-* 안과 
-    + 시야 데이터 분석
+* 외과
+    + 신장이식 연구
     
-    + 국민건강영양조사 백내장/안검하수 연구
     
 
 * 내과 
@@ -165,56 +205,31 @@ class: center, middle
     
     + 심혈관 생리학 지표 계산 
     
-    + 대장암 위험 요인 생존분석
+    + 국민건강영양조사 신장 기능 연구
     
-    + 타 연구결과 정리
-    
-    
-
 
 * 정신건강의학과
     + 외상후 스트레스 장애 네트워크 분석
 
 
----
-# 시야데이터: 일반적인 통계
-
-기술통계, 회귀/생존분석, 간단한 그림
-
-[![](VF.png)](http://app.zarathu.com)
-
-
 
 ---
-# 국민건강영양조사
+# 신장이식
 
-표본조사데이터: [survey](http://r-survey.r-forge.r-project.org/survey/) 패키지 적용, 표본가중치 고려한 통계
+기술통계, 회귀/생존분석, 맞춤형 그림
 
-[![](cataract.png)](http://app.zarathu.com)
+[![](https://jinseob2kim.github.io/LectureRpackage/RUCK2019/ktsym.jpg)](http://app.zarathu.com)
+
+
 
 
 ---
 # 심혈관질환 위험요인
 
-반복측정: [geepack](https://cran.r-project.org/web/packages/geepack/index.html) 패키지 적용, 한 사람이 2개 이상의 심혈관 시술 받음. 
+반복측정, 한 사람이 2개 이상의 심혈관 시술 받음. 
 
 [![](gee.png)](http://app.zarathu.com)
 
-
----
-# 맞춤형 그림
-
-논문 맞춤형 [그림](https://ildiczeller.com/2018/02/11/downloadable-ggplots-in-shiny/)과 [테이블](https://rstudio.github.io/DT/extensions.html)을 다운로드
-
-
-.pull-left[
-[![Hazard ratio](geeplot1.png)](http://app.zarathu.com)
-
-]
-
-.pull-right[
-[![Time dependent ROC](geeplot2.png)](http://app.zarathu.com)
-]
 
 
 ---
@@ -278,46 +293,122 @@ datatable(
 
 
 ---
+# 대시보드
+
+* 미세먼지 데이터 [웹 크롤링](https://jinseob2kim.github.io/LectureRpackage/RSelenium/) 후 [대시보드](https://github.com/zarathucorp/kweatherdashboard) 만들기
+
+
+[![](dashboard.png)](http://app.zarathu.com)
+
+
+---
 
 class: center, middle
 
 # 범용 서비스
 
 ---
-# 직접 데이터 업로드해서 이용
+# 공개 웹
 
-데이터 형태에 따라 3개로 따로 만듦. 기술통계, 회귀분석/생존분석, ROC 분석을 포함. 
+
+.large[
+직접 데이터 업로드, 기술통계, 회귀분석/생존분석, ROC 분석. 
 
 * [일반 데이터](http://app.zarathu.com/basic)
 
 
-* [반복측정 데이터](http://app.zarathu.com/repeated) - 한 사람이 여러번 측정함, [GEE](https://en.wikipedia.org/wiki/Generalized_estimating_equation) 기반의 분석 필요.
+* [반복측정 데이터](http://app.zarathu.com/repeated) - 한 사람이 여러번 측정함
 
 
 * [서베이(survey) 데이터](http://app.zarathu.com/survey) - 샘플가중치 존재(ex: 국건영)
 
 
 * [프로펜시티 점수 분석]((http://app.zarathu.com/ps)(experimental)
+]
 
 
 ---
-# R 패키지: [jsmodule](https://github.com/jinseob2kim/jsmodule) 
+# R 패키지 개발
 
-자신의 컴퓨터에서 직접 수행할 수 있도록 [Rstudio Addin 포함한 패키지](https://github.com/jinseob2kim/jsmodule)로 배포, [CRAN](https://cran.r-project.org/package=jsmodule) 등록됨. 그 외, 생존분석 그림을 위한 [jskm](https://cran.r-project.org/package=jskm), 회귀분석 테이블을 만드는 [jstable](https://cran.r-project.org/package=jstable) 
+3개의 패키지를 [CRAN](https://cran.r-project.org/)에 배포.
 
-```{r}
-include_graphics("https://raw.githubusercontent.com/jinseob2kim/jsmodule/master/vignettes/figures/addin.gif")
+- [jstable](https://github.com/jinseob2kim/jstable): 논문용 테이블 만들기 
+
+- [jskm](https://github.com/jinseob2kim/jskm): kaplan-meier 생존곡선 그리기
+
+- [jsmodule](https://github.com/jinseob2kim/jsmodule): 위 2 패키지를 적용한 통계분석 웹
+
+--
+
+<center><a href="https://ipub.com/dev-corner/apps/r-package-downloads/"><img src="https://raw.githubusercontent.com/jinseob2kim/LectureRpackage/master/docs/RUCK2019/cranstats.png" width=50%></a></center>
+
+[RUCK 2019 발표](https://ruck2019.r-kor.org/speakers/zarathu/)
+
+---
+# [jstable](https://github.com/jinseob2kim/jstable): table 1
+
+```r
+library(jstable)
+*tb1 <- CreateTableOneJS(names(mtcars), strata = "vs", data = mtcars, factorVars = c("vs", "am", "gear", "carb"))
+datatable(tb1$table[, -6], caption = tb1$caption)
+```
+
+```{r, echo = F}
+library(jstable)
+tb1 <- CreateTableOneJS(names(mtcars), strata = "vs", data = mtcars, factorVars = c("vs", "am", "gear", "carb"))
+datatable(tb1$table[, -6], caption = tb1$caption, options = list(pageLength = 5))
+```
+
+---
+# [jstable](https://github.com/jinseob2kim/jstable): regression
+
+```r
+model.logisic <- glm(vs ~ wt + qsec, data = mtcars)
+*res.logistic <- glmshow.display(model.logisic)
+*out.logistic <- LabelepiDisplay(res.logistic)
+datatable(out.logistic, caption = res.logistic$first.line)
+```
+
+```{r, echo=F}
+model.logisic <- glm(vs ~ wt + qsec, data = mtcars)
+res.logistic <- glmshow.display(model.logisic)
+out.logistic <- LabelepiDisplay(res.logistic)
+datatable(out.logistic, caption = res.logistic$first.line, options = list(dom = 'rt'))
+```
+
+---
+# [jskm](https://github.com/jinseob2kim/jskm)
+
+```{r, fig.width= 8, fig.height= 5}
+library(jskm);library(survival)
+fit <- survfit(Surv(time, status) ~ rx, data = colon)
+jskm(fit, timeby=365, marks = F, pval = T, table = T)
 ```
 
 
 ---
-## 패키지 다운로드 수
+# [jsmodule](https://github.com/jinseob2kim/jsmodule)
+
+<center>
+<figure>
+<a href="https://github.com/jinseob2kim/jsmodule"><img src="https://github.com/jinseob2kim/jsmodule/raw/master/vignettes/figures/addin.gif" width=100%></a>
+<figurecaption>Rstudio Addins: jsmodule packages</figurecaption>
+</figure>
+</center>
 
 
-<iframe src="https://shinyus.ipub.com/cranview/" width="100%" height="80%" frameborder="0" allowfullscreen></iframe>
+통계분석 웹 : http://app.zarathu.com/
 
 
 
+
+
+
+---
+
+class: center, middle
+
+# 기타 
 
 ---
 # 개발 & 배포환경 
@@ -345,7 +436,27 @@ include_graphics("https://raw.githubusercontent.com/jinseob2kim/jsmodule/master/
 
 [RUCK2018 발표자료](https://blog.zarathu.com/posts/2018-11-08-ruck2018/)
     
+---
+# [shinykorea](https://github.com/shinykorea/Meetup) 밋업 
 
+.large[
+매달 모여 shiny 지식 공유. 
+]
+
+<center>
+<a href="https://github.com/jinseob2kim/shinykorea/Meetup"><img src="meetup.png" width=90%></a>
+</center>
+
+
+---
+# 오픈채팅
+
+.large[
+프로그래밍 갤러리 R사용자 모임
+]
+
+
+<center><img src="openchat.jpg" width=30%></center>
 
 ---
 # Executive Summary 
@@ -354,11 +465,18 @@ include_graphics("https://raw.githubusercontent.com/jinseob2kim/jsmodule/master/
 * [R](https://www.r-project.org/)로 통계분석 뿐 아니라 [논문](https://github.com/rstudio/rticles), [발표 슬라이드](https://github.com/yihui/xaringan), [홈페이지](https://github.com/rstudio/blogdown), [블로그](https://rstudio.github.io/distill/), [웹 어플리케이션](https://shiny.rstudio.com/)을 만들 수 있다. 
 
 
-* 의학연구자들에게 [맞춤형 통계 웹](http://app.zarathu.com)을 제공하는 것을 업으로 삼고 있다.
+* 의학연구자들에게 [맞춤형 통계 웹](http://app.zarathu.com)을 제공.
 
 
-* 범용으로 쓰일만한 것들을 [웹](http://app.zarathu.com)과 [R 패키지](https://github.com/jinseob2kim/jsmodule)로 배포한다.
+* 범용으로 쓰일만한 것들을 [웹](http://app.zarathu.com)과 [R 패키지](https://github.com/jinseob2kim/jsmodule)로 배포.
 
+
+모임 소개 
+
+* [`r anicon::faa('github', animate='float', rtext='shinykorea')`](https://github.com/shinykorea/Meetup) 밋업 후원: [R](https://www.r-project.org/) 웹만들기 지식 공유
+
+
+* 카카오 오픈채팅: 프로그래밍 갤러리 R사용자 모임
 ]
 
 
