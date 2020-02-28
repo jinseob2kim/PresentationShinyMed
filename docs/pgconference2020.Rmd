@@ -1,8 +1,8 @@
 ---
 title: "R로 만드는 웹 애플리케이션"
-author: '조선니체'
-institute: "[프갤 컨퍼런스 2020](https://pgconference.github.io/)"
-date: "2020-02-15"
+author: '김진섭'
+institute: 
+date: "2020-02-28"
 output:
   xaringan::moon_reader:
     css: ["css/footer-header.css", "default"]
