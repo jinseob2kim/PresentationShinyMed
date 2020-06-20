@@ -1,0 +1,68 @@
+---
+title: "2020년 만들었던 ShinyApps"
+author: 김진섭; [`r anicon::faa('github', animate='float', rtext='jinseob2kim')`](https://github.com/jinseob2kim)
+institute: "차라투"
+date: "202-06-26"
+output:
+  xaringan::moon_reader:
+    css: ["css/footer-header.css", "default"]
+    lib_dir: libs
+    nature:
+      beforeInit: "js/macros.js"
+      slideNumberFormat: |
+        <div class="progress-bar-container">
+          </div>
+          <div class="progress-bar" style="width: calc(%current% / %total% * 100%);">
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: "4:3" 
+subtitle: "[Shinykorea 밋업](https://github.com/shinykorea/Meetup)"
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(echo = T, fig.align = "center", message = F, warning = F)
+library(knitr);library(DT);library(dplyr);library(data.table);library(rmarkdown);library(readr);library(purrr);library(tidyr)
+```
+
+
+layout: true
+
+<div class="my-footer"><span><a href="https://www.zarathu.com">Zarathu Co.,Ltd</a>   
+&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
+&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
+<a href="https://github.com/jinseob2kim">김진섭</a></span></div> 
+
+
+
+---
+# Executive Summary 
+
+.large[
+[R](https://www.r-project.org/)로 **심평원, 공단** 빅데이터의 데이터 정리와 통계분석을 수행하였다.
+
+* [haven](https://github.com/tidyverse/haven) 패키지로 SAS 파일을 직접 읽을 수 있다.
+
+* [dplyr](https://dplyr.tidyverse.org), [data.table](https://github.com/Rdatatable/data.table) 을 활용, 기존 [R](https://www.r-project.org/) 문법보다 빠르게 데이터 를 정리할 수 있다.  
+
+* [dbplyr](https://dplyr.tidyverse.org) 를 활용, [R](https://www.r-project.org/) 코드를 **PROC SQL** 문으로 바꿔 복잡한 SAS 작업을 수행할 수 있다. 
+
+* 자체 개발한 [jsmodule](https://github.com/jinseob2kim/jsmodule) 패키지를 이용, GUI 환경에서 기술통계와 회귀/생존분석을 수행하고 테이블과 그림을 바로 다운받는다.
+
+
+[jsmodule](https://github.com/jinseob2kim/jsmodule) 의 [표본조사 데이터 분석](http://app.zarathu.com/survey/) 기능을 활용, GUI 환경에서 **국건영** 데이터 분석을 수행하였다.
+]
+
+
+---
+
+
+---
+class: center, middle
+
+# END
+
+
