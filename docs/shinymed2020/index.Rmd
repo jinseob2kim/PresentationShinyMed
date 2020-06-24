@@ -271,6 +271,18 @@ https://github.com/shinykorea/corona-triage
 
 ![](kweather.png)
 
+---
+# 코로나 예측모형
+
+.large[
+서울시 감염병관리지원단 자문 
+
+* 통계적 모델링, 예측을 shiny로 구현
+]
+
+
+
+
 
 ---
 
