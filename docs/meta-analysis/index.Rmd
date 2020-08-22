@@ -67,7 +67,7 @@ layout: true
 # My ShinyApps
 
 
-[![](http://app.zarathu.com/img/meta-analysis.png)](http://app.zarathu.com/meta-analysis)
+[![](https://blog.zarathu.com/posts/2020-08-22-meta-analysis-shiny/meta.png)](http://app.zarathu.com/meta-analysis)
 
 
 ---
