@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>메타분석 웹 개발 후기</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="김진섭; <span>&lt;i class="fab  fa-github faa-float animated "&gt;&lt;/i&gt;jinseob2kim</span>" />
+    <meta name="date" content="2020-08-28" />
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/font-awesome-animation/font-awesome-animation-emi.css" rel="stylesheet" />
+    <script src="libs/fontawesome/js/fontawesome-all.min.js"></script>
+    <link rel="stylesheet" href="css/footer-header.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# 메타분석 웹 개발 후기
+## <a href="https://github.com/shinykorea/Meetup">Shinykorea 밋업</a>
+### 김진섭; <a href="https://github.com/jinseob2kim"><span>&lt;i class="fab  fa-github faa-float animated "&gt;&lt;/i&gt;jinseob2kim</span></a>
+### 차라투
+### 2020-08-28
+
+---
+
+
+
+
+
+layout: true
+
+&lt;div class="my-footer"&gt;&lt;span&gt;&lt;a href="https://www.zarathu.com"&gt;Zarathu Co.,Ltd&lt;/a&gt;   
+&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;
+&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;
+&lt;a href="https://github.com/jinseob2kim"&gt;김진섭&lt;/a&gt;&lt;/span&gt;&lt;/div&gt; 
+
+
+
+---
+# Executive Summary 
+
+.large[
+**메타분석**은 여러 연구결과를 합쳐서 보여주는 분석, [meta](https://cran.r-project.org/package=meta) 패키지를 ShinyApps 로 구현하였다.
+
+- [rhandsontable](https://cran.r-project.org/package=rhandsontable) 로 연구결과를 직접 입력한다.
+
+- 서버에 한글폰트 설치 후 [showtext](https://cran.r-project.org/package=showtext) 로 불러와 한글깨짐을 해결한다.
+
+- [colourpicker](https://cran.r-project.org/package=colourpicker) 로 글자색 조절한다.
+
+- **EMF** 포맷 다운로드를 지원, PPT에서 직접 그림수정할 수 있다.
+]
+
+
+---
+# 메타분석 
+
+![](https://mblogthumb-phinf.pstatic.net/MjAxODA1MzBfODQg/MDAxNTI3NjQzNjg1NjA2.3oQ6vLm7d0yML0q5ohLvSV1uYobZ-eNVmPp_jVMM8Bog.L5XPNwr9Z_GtTnYC4qdnF_zeCdY20Ok4-JPPysM2F70g.JPEG.ecotogether/4metaanalysishoriz.jpg?type=w800)
+
+
+[Doing Meta Analysis in R](https://bookdown.org/MathiasHarrer/Doing_Meta_Analysis_in_R/) 책 추천
+
+
+---
+# My ShinyApps
+
+
+[![](http://app.zarathu.com/img/meta-analysis.png)](http://app.zarathu.com/meta-analysis)
+
+
+---
+# 테이블입력: [rhandsontable](https://cran.r-project.org/package=rhandsontable)
+
+.large[
+**csv** 다운로드, **행/열 추가**도 가능.
+
+- 메타분석웹은 행추가 옵션만 추가했음 (default)
+]
+
+```r
+library(shiny)
+ui = fluidPage(
+        selectInput("inputtype", "Input type", c("Measure &amp; 95% CI", "Event &amp; N", "Mean &amp; S.D")),
+*       rHandsontableOutput("hot"),
+        DT::DToutput("table")
+    )
+)
+```
+
+---
+
+```r
+# In server
+output$hot &lt;- renderRHandsontable({
+        DF &lt;- switch(input$inputtype,
+                     "Measure &amp; 95% CI" = data.default,
+                     "Event &amp; N" = data.bin,
+                     "Mean &amp; S.D" = data.cont
+                     )
+
+        rhandsontable(DF,  stretchH = "all") %&gt;% 
+            hot_context_menu(
+                customOpts = list(
+                    csv = list(name = "Download to CSV",
+                               callback = htmlwidgets::JS(
+                                   "function (key, options) {
+                         var csv = csvString(this, sep=',', dec='.');
+
+                         var link = document.createElement('a');
+                         link.setAttribute('href', 'data:text/plain;charset=utf-8,' +
+                           encodeURIComponent(csv));
+                         link.setAttribute('download', 'data.csv');
+
+                         document.body.appendChild(link);
+                         link.click();
+                         document.body.removeChild(link);
+                       }"))))
+    })
+```
+
+---
+# 저장
+
+.large[
+`hot_to_r` 함수 이용 **data.frame**으로 저장.
+]
+
+```r
+output$table &lt;- DT::renderDT({
+* DF &lt;- hot_to_r(input$hot)
+  datatable(DF)
+})
+
+```
+
+---
+# 한글깨짐: [showtext](https://cran.r-project.org/package=showtext)
+
+나눔폰트: 우분투 기준 `/usr/share/fonts/truetype/nanum/` 에 저장됨.
+
+```sh
+sudo apt-get install fonts-nanum-coding 
+```
+
+`app.R` 시작부분에 아래 코드 실행 
+
+
+```r
+library(showtext)
+showtext_opts(dpi = 90) ## 작을수록 글씨 커짐                                                
+font_add("NanumGothic", "/usr/share/fonts/truetype/nanum/NanumGothic.ttf")
+showtext_auto()
+```
+
+
+---
+# [colourpicker](https://github.com/daattali/colourpicker) - color UI 
+
+```r
+library(shiny)
+shinyApp(
+    ui = fluidPage(
+*       colourpicker::colourInput("col", "Select colour", "purple", palette = "limited"),
+        plotOutput("plot")
+    ),
+    server = function(input, output) {
+        output$plot &lt;- renderPlot({
+            set.seed(1)
+            plot(rnorm(50), bg = input$col, col = input$col, pch = 21)
+        })
+    }
+)
+```
+
+
+![](https://raw.githubusercontent.com/jinseob2kim/PresentationShinyMed/master/docs/qgraph.png)
+
+
+---
+# EMF 
+
+[devEMF](https://cran.r-project.org/package=devEMF) 패키지 이용, `emfPlus` 는 투명지원기능인데 **F** 가 안전.
+
+
+```r
+*devEMF::emf("plot.emf", width = 7, height = 7, emfPlus = F)
+ggplot(mtcars, aes(mpg, cyl)) + geom_point()
+dev.off()
+```
+
+&lt;img src="https://raw.githubusercontent.com/jinseob2kim/PresentationShinyMed/master/docs/zzz.png" width="70%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# Executive Summary 
+
+.large[
+**메타분석**은 여러 연구결과를 합쳐서 보여주는 분석, [meta](https://cran.r-project.org/package=meta) 패키지를 ShinyApps 로 구현하였다.
+
+- [rhandsontable](https://cran.r-project.org/package=rhandsontable) 로 연구결과를 직접 입력한다.
+
+- 서버에 한글폰트 설치 후 [showtext](https://cran.r-project.org/package=showtext) 로 불러와 한글깨짐을 해결한다.
+
+- [colourpicker](https://cran.r-project.org/package=colourpicker) 로 글자색 조절한다.
+
+- **EMF** 포맷 다운로드를 지원, PPT에서 직접 그림수정할 수 있다.
+]
+
+---
+class: center, middle
+
+# END
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="js/macros.js"></script>
+<script>var slideshow = remark.create({
+"slideNumberFormat": "<div class=\"progress-bar-container\">   </div>   <div class=\"progress-bar\" style=\"width: calc(%current% / %total% * 100%);\"> ",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "4:3"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
