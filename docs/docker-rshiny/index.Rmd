@@ -1,0 +1,159 @@
+---
+title: "RStudio & Shiny Docker 소개"
+author: 김진섭; [`r anicon::faa('github', animate='float', rtext='jinseob2kim')`](https://github.com/jinseob2kim)
+institute: "차라투"
+date: "2020-10-26"
+output:
+  xaringan::moon_reader:
+    css: ["css/footer-header.css", "default"]
+    lib_dir: libs
+    nature:
+      beforeInit: "js/macros.js"
+      slideNumberFormat: |
+        <div class="progress-bar-container">
+          </div>
+          <div class="progress-bar" style="width: calc(%current% / %total% * 100%);">
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: "4:3" 
+subtitle: "[Shinykorea 밋업](https://github.com/shinykorea/Meetup)"
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(echo = T, fig.align = "center", message = F, warning = F)
+library(knitr);library(DT);library(dplyr);library(data.table);library(rmarkdown);library(readr);library(purrr);library(tidyr)
+```
+
+
+layout: true
+
+<div class="my-footer"><span><a href="https://www.zarathu.com">Zarathu Co.,Ltd</a>   
+&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
+&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
+<a href="https://github.com/jinseob2kim">김진섭</a></span></div> 
+
+
+
+---
+# Executive Summary 
+
+.large[
+- RStudio와 Shiny-server 가 포함된 Docker image 이용, 새로 서버 구축할 때마다 재설치하는 번거로움을 없앤다.
+
+- 공식 image 참고하여 자체개발. https://github.com/jinseob2kim/docker-rshiny
+]
+
+---
+# Docker 개념 및 설치 
+
+.large[
+https://subicura.com/2017/01/19/docker-guide-for-beginners-2.html 추천 
+]
+
+
+---
+# [Rocker project](https://github.com/rocker-org/rocker)
+
+공식 docker image
+
+image            | description                               | size   | metrics | build status 
+---------------- | ----------------------------------------- | ------ | ------- | --------------
+[rstudio](https://hub.docker.com/r/rocker/rstudio)          |  Adds rstudio                             | [![](https://images.microbadger.com/badges/image/rocker/rstudio-stable.svg)](https://microbadger.com/) | [![](https://img.shields.io/docker/pulls/rocker/rstudio.svg)](https://hub.docker.com/r/rocker/rstudio)  |  [![](https://img.shields.io/docker/automated/rocker/rstudio.svg)](https://hub.docker.com/r/rocker/rstudio/builds)
+[tidyverse](https://hub.docker.com/r/rocker/tidyverse)        |  Adds tidyverse & devtools                | [![](https://images.microbadger.com/badges/image/rocker/tidyverse.svg)](https://microbadger.com/images/rocker/tidyverse) | [![](https://img.shields.io/docker/pulls/rocker/tidyverse.svg)](https://hub.docker.com/r/rocker/tidyverse) |  [![](https://img.shields.io/docker/automated/rocker/tidyverse.svg)](https://hub.docker.com/r/rocker/tidyverse/builds) 
+[verse](https://hub.docker.com/r/rocker/verse)            |  Adds tex & publishing-related packages   | [![](https://images.microbadger.com/badges/image/rocker/verse.svg)](https://microbadger.com/images/rocker/verse) | [![](https://img.shields.io/docker/pulls/rocker/verse.svg)](https://hub.docker.com/r/rocker/verse) | [![](https://img.shields.io/docker/automated/rocker/verse.svg)](https://hub.docker.com/r/rocker/verse/builds)
+[geospatial](https://hub.docker.com/r/rocker/geospatial)            |  Adds geospatial libraries   | [![](https://images.microbadger.com/badges/image/rocker/geospatial.svg)](https://microbadger.com/images/rocker/geospatial) | [![](https://img.shields.io/docker/pulls/rocker/geospatial.svg)](https://hub.docker.com/r/rocker/geospatial) | [![](https://img.shields.io/docker/automated/rocker/geospatial.svg)](https://hub.docker.com/r/rocker/geospatial/builds)
+
+.large[
+[rstudio](https://hub.docker.com/r/rocker/rstudio) 에 shiny-server 추가 가능 
+- 설치에 시간 걸림, 해결하려면 따로 이미지 만들어야
+
+]
+
+---
+# [Add shiny server](https://hub.docker.com/r/rocker/rstudio)
+
+```shell
+docker run -d -p 3838:3838 -p 8787:8787 -e ADD=shiny -e PASSWORD=yourpasswordhere rocker/rstudio
+```
+
+shiny server is now running on `localhost:3838` and RStudio on `localhost:8787`.  
+
+
+Note: this triggers shiny install at runtime, which may **require a few minutes** to execute before services come up.
+If you are building your own Dockerfiles on top of this stack, you should simply include the RUN command:
+
+    RUN export ADD=shiny && bash /etc/cont-init.d/add
+
+Then omit the `-e ADD=shiny` when running your image and shiny should be installed and waiting on port 3838.
+
+**Note**: Please see the `rocker/shiny` and `rocker/shiny-verse` images for
+setting up a shiny server in a separate container from RStudio. 
+
+
+---
+# 참고해서 새로 만들자
+
+https://github.com/jinseob2kim/docker-rshiny
+
+```shell
+docker run --rm -d -p 3838:3838 -p 8787:8787 \
+    -e USER=js -e PASSWORD=js -e ROOT=TRUE\
+    -v $(pwd):/home/js \ 
+    jinseob2kim/docker-rshiny
+
+```
+
+Default shinyapps directory is `/home/js/ShinyApps`
+
+- `--rm` : 실행중지시 이미지 삭제, `-d`: 백그라운드 실행
+
+- `-p` : 도커내부포트:실제접속포트
+
+- `-v` : 디스크 연결, `$(pwd)` 는 현재작업위치 
+
+
+
+**Run** (8787- rstudio server, 3838- shiny server)
+
+- Local cumputer : http://localhost:8787, http://localhost:3838,
+
+
+- Server : **Your IP**:8787, **Your IP**:3838
+
+---
+# 제작파일 살펴보기 
+
+.large[
+[Dockerfile](https://github.com/jinseob2kim/docker-rshiny/blob/master/Dockerfile): 메인코드 
+- 우분투 기반, R/RStudio/Shiny-server 설치
+
+
+[ini.sh](https://github.com/jinseob2kim/docker-rshiny/blob/master/ini.sh): 초기작업
+- User, Shiny-server 디렉토리, sudo..
+
+[supervisord.conf](https://github.com/jinseob2kim/docker-rshiny/blob/master/supervisord.conf): 실행
+- 초기작업 후 RStudio, shiny-server 실행
+
+
+]
+
+---
+# Executive Summary 
+
+.large[
+- RStudio와 Shiny-server 가 포함된 Docker image 이용, 새로 서버 구축할 때마다 재설치하는 번거로움을 없앤다.
+
+- 공식 image 참고하여 자체개발. https://github.com/jinseob2kim/docker-rshiny
+]
+
+
+---
+class: center, middle
+
+# END
+
+

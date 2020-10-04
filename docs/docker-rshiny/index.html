@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>RStudio &amp; Shiny Docker 소개</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="김진섭; <span>&lt;i class="fab  fa-github faa-float animated "&gt;&lt;/i&gt;jinseob2kim</span>" />
+    <meta name="date" content="2020-10-26" />
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/font-awesome-animation/font-awesome-animation-emi.css" rel="stylesheet" />
+    <script src="libs/fontawesome/js/fontawesome-all.min.js"></script>
+    <link rel="stylesheet" href="css/footer-header.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# RStudio &amp; Shiny Docker 소개
+## <a href="https://github.com/shinykorea/Meetup">Shinykorea 밋업</a>
+### 김진섭; <a href="https://github.com/jinseob2kim"><span>&lt;i class="fab  fa-github faa-float animated "&gt;&lt;/i&gt;jinseob2kim</span></a>
+### 차라투
+### 2020-10-26
+
+---
+
+
+
+
+
+layout: true
+
+&lt;div class="my-footer"&gt;&lt;span&gt;&lt;a href="https://www.zarathu.com"&gt;Zarathu Co.,Ltd&lt;/a&gt;   
+&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;
+&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;
+&lt;a href="https://github.com/jinseob2kim"&gt;김진섭&lt;/a&gt;&lt;/span&gt;&lt;/div&gt; 
+
+
+
+---
+# Executive Summary 
+
+.large[
+- RStudio와 Shiny-server 가 포함된 Docker image 이용, 새로 서버 구축할 때마다 재설치하는 번거로움을 없앤다.
+
+- 공식 image 참고하여 자체개발. https://github.com/jinseob2kim/docker-rshiny
+]
+
+---
+# Docker 개념 및 설치 
+
+.large[
+https://subicura.com/2017/01/19/docker-guide-for-beginners-2.html 추천 
+]
+
+
+---
+# [Rocker project](https://github.com/rocker-org/rocker)
+
+공식 docker image
+
+image            | description                               | size   | metrics | build status 
+---------------- | ----------------------------------------- | ------ | ------- | --------------
+[rstudio](https://hub.docker.com/r/rocker/rstudio)          |  Adds rstudio                             | [![](https://images.microbadger.com/badges/image/rocker/rstudio-stable.svg)](https://microbadger.com/) | [![](https://img.shields.io/docker/pulls/rocker/rstudio.svg)](https://hub.docker.com/r/rocker/rstudio)  |  [![](https://img.shields.io/docker/automated/rocker/rstudio.svg)](https://hub.docker.com/r/rocker/rstudio/builds)
+[tidyverse](https://hub.docker.com/r/rocker/tidyverse)        |  Adds tidyverse &amp; devtools                | [![](https://images.microbadger.com/badges/image/rocker/tidyverse.svg)](https://microbadger.com/images/rocker/tidyverse) | [![](https://img.shields.io/docker/pulls/rocker/tidyverse.svg)](https://hub.docker.com/r/rocker/tidyverse) |  [![](https://img.shields.io/docker/automated/rocker/tidyverse.svg)](https://hub.docker.com/r/rocker/tidyverse/builds) 
+[verse](https://hub.docker.com/r/rocker/verse)            |  Adds tex &amp; publishing-related packages   | [![](https://images.microbadger.com/badges/image/rocker/verse.svg)](https://microbadger.com/images/rocker/verse) | [![](https://img.shields.io/docker/pulls/rocker/verse.svg)](https://hub.docker.com/r/rocker/verse) | [![](https://img.shields.io/docker/automated/rocker/verse.svg)](https://hub.docker.com/r/rocker/verse/builds)
+[geospatial](https://hub.docker.com/r/rocker/geospatial)            |  Adds geospatial libraries   | [![](https://images.microbadger.com/badges/image/rocker/geospatial.svg)](https://microbadger.com/images/rocker/geospatial) | [![](https://img.shields.io/docker/pulls/rocker/geospatial.svg)](https://hub.docker.com/r/rocker/geospatial) | [![](https://img.shields.io/docker/automated/rocker/geospatial.svg)](https://hub.docker.com/r/rocker/geospatial/builds)
+
+.large[
+[rstudio](https://hub.docker.com/r/rocker/rstudio) 에 shiny-server 추가 가능 
+- 설치에 시간 걸림, 해결하려면 따로 이미지 만들어야
+
+]
+
+---
+# [Add shiny server](https://hub.docker.com/r/rocker/rstudio)
+
+```shell
+docker run -d -p 3838:3838 -p 8787:8787 -e ADD=shiny -e PASSWORD=yourpasswordhere rocker/rstudio
+```
+
+shiny server is now running on `localhost:3838` and RStudio on `localhost:8787`.  
+
+
+Note: this triggers shiny install at runtime, which may **require a few minutes** to execute before services come up.
+If you are building your own Dockerfiles on top of this stack, you should simply include the RUN command:
+
+    RUN export ADD=shiny &amp;&amp; bash /etc/cont-init.d/add
+
+Then omit the `-e ADD=shiny` when running your image and shiny should be installed and waiting on port 3838.
+
+**Note**: Please see the `rocker/shiny` and `rocker/shiny-verse` images for
+setting up a shiny server in a separate container from RStudio. 
+
+
+---
+# 참고해서 새로 만들자
+
+https://github.com/jinseob2kim/docker-rshiny
+
+```shell
+docker run --rm -d -p 3838:3838 -p 8787:8787 \
+    -e USER=js -e PASSWORD=js -e ROOT=TRUE\
+    -v $(pwd):/home/js \ 
+    jinseob2kim/docker-rshiny
+
+```
+
+Default shinyapps directory is `/home/js/ShinyApps`
+
+- `--rm` : 실행중지시 이미지 삭제, `-d`: 백그라운드 실행
+
+- `-p` : 도커내부포트:실제접속포트
+
+- `-v` : 디스크 연결, `$(pwd)` 는 현재작업위치 
+
+
+
+**Run** (8787- rstudio server, 3838- shiny server)
+
+- Local cumputer : http://localhost:8787, http://localhost:3838,
+
+
+- Server : **Your IP**:8787, **Your IP**:3838
+
+---
+# 제작파일 살펴보기 
+
+.large[
+[Dockerfile](https://github.com/jinseob2kim/docker-rshiny/blob/master/Dockerfile): 메인코드 
+- 우분투 기반, R/RStudio/Shiny-server 설치
+
+
+[ini.sh](https://github.com/jinseob2kim/docker-rshiny/blob/master/ini.sh): 초기작업
+- User, Shiny-server 디렉토리, sudo..
+
+[supervisord.conf](https://github.com/jinseob2kim/docker-rshiny/blob/master/supervisord.conf): 실행
+- 초기작업 후 RStudio, shiny-server 실행
+
+
+]
+
+---
+# Executive Summary 
+
+.large[
+- RStudio와 Shiny-server 가 포함된 Docker image 이용, 새로 서버 구축할 때마다 재설치하는 번거로움을 없앤다.
+
+- 공식 image 참고하여 자체개발. https://github.com/jinseob2kim/docker-rshiny
+]
+
+
+---
+class: center, middle
+
+# END
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="js/macros.js"></script>
+<script>var slideshow = remark.create({
+"slideNumberFormat": "<div class=\"progress-bar-container\">   </div>   <div class=\"progress-bar\" style=\"width: calc(%current% / %total% * 100%);\"> ",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "4:3"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
