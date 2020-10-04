@@ -15,3 +15,5 @@ Presentation: Shiny for medical research
 * 2020년 만들었던 ShinyApps: [Shinykorea 밋업](https://github.com/shinykorea/Meetup) - https://jinseob2kim.github.io/PresentationShinyMed/shinymed2020
 
 * 메타분석 웹 개발 후기: [Shinykorea 밋업](https://github.com/shinykorea/Meetup) - https://jinseob2kim.github.io/PresentationShinyMed/meta-analysis
+
+* RStudio & Shiny Docker 소개: Shinykorea 밋업](https://github.com/shinykorea/Meetup) - https://jinseob2kim.github.io/PresentationShinyMed/docker-rshiny
