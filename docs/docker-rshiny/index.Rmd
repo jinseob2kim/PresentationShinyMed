@@ -44,7 +44,7 @@ layout: true
 .large[
 - RStudio와 Shiny-server 가 포함된 Docker image 이용, 새로 서버 구축할 때마다 재설치하는 번거로움을 없앤다.
 
-- 공식 image 참고하여 자체개발. https://github.com/jinseob2kim/docker-rshiny
+- [공식 image](https://hub.docker.com/r/rocker/rstudio) 참고하여 자체개발. https://github.com/jinseob2kim/docker-rshiny
 ]
 
 ---
@@ -66,6 +66,7 @@ image            | description                               | size   | metrics 
 [tidyverse](https://hub.docker.com/r/rocker/tidyverse)        |  Adds tidyverse & devtools                | [![](https://images.microbadger.com/badges/image/rocker/tidyverse.svg)](https://microbadger.com/images/rocker/tidyverse) | [![](https://img.shields.io/docker/pulls/rocker/tidyverse.svg)](https://hub.docker.com/r/rocker/tidyverse) |  [![](https://img.shields.io/docker/automated/rocker/tidyverse.svg)](https://hub.docker.com/r/rocker/tidyverse/builds) 
 [verse](https://hub.docker.com/r/rocker/verse)            |  Adds tex & publishing-related packages   | [![](https://images.microbadger.com/badges/image/rocker/verse.svg)](https://microbadger.com/images/rocker/verse) | [![](https://img.shields.io/docker/pulls/rocker/verse.svg)](https://hub.docker.com/r/rocker/verse) | [![](https://img.shields.io/docker/automated/rocker/verse.svg)](https://hub.docker.com/r/rocker/verse/builds)
 [geospatial](https://hub.docker.com/r/rocker/geospatial)            |  Adds geospatial libraries   | [![](https://images.microbadger.com/badges/image/rocker/geospatial.svg)](https://microbadger.com/images/rocker/geospatial) | [![](https://img.shields.io/docker/pulls/rocker/geospatial.svg)](https://hub.docker.com/r/rocker/geospatial) | [![](https://img.shields.io/docker/automated/rocker/geospatial.svg)](https://hub.docker.com/r/rocker/geospatial/builds)
+[shiny-verse](https://hub.docker.com/r/rocker/shiny-verse)            |  shiny-server   | [![](https://images.microbadger.com/badges/image/rocker/shiny-verse.svg)](https://microbadger.com/images/rocker/shiny-verse) | [![](https://img.shields.io/docker/pulls/rocker/shiny-verse.svg)](https://hub.docker.com/r/rocker/shiny-verse) | [![](https://img.shields.io/docker/automated/rocker/shiny-verse.svg)](https://hub.docker.com/r/rocker/shiny-verse/builds)
 
 .large[
 [rstudio](https://hub.docker.com/r/rocker/rstudio) 에 shiny-server 추가 가능 
@@ -140,6 +141,40 @@ Default shinyapps directory is `/home/js/ShinyApps`
 
 
 ]
+
+
+---
+# Dockerhub
+
+.large[
+코드 [깃헙](https://github.com/jinseob2kim/docker-rshiny) 에 올린 후 [dockerhub](https://hub.docker.com/r/jinseob2kim/docker-rshiny) 과 연계하면 이미지 제작됨.
+]
+
+--
+.large[
+[깃헙 action](https://github.com/jinseob2kim/docker-rshiny/blob/master/.github/workflows/dockerimage.yml) 이용, [dockerhub 필요없이 깃헙 repository에 저장](https://coffeewhale.com/cicd/github/2019/10/14/github-actions/) 할 수도 있음. 
+
+]
+
+```yml
+name: DockerImageCI
+
+on: [push]
+
+jobs:
+ build:
+    runs-on: ubuntu-latest
+ 
+    steps:
+    - uses: actions/checkout@v1
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag docker.pkg.github.com/jinseob2kim/docker-rshiny/docker-rshiny:githubactions
+    - name: Login to Github package registry
+      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+    - name: Push Docker image to Github package registry
+      run: docker push docker.pkg.github.com/jinseob2kim/docker-rshiny/docker-rshiny:githubactions
+```
+
 
 ---
 # Executive Summary 
